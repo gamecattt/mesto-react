@@ -22,7 +22,7 @@ function EditAvatarPopup(props) {
       onSubmit={handleSubmit}
     >
       <input
-        className="popup-form__input"
+        className="form__input popup-form__input"
         name="avatar"
         type="url"
         placeholder="Ссылка на картинку"
@@ -30,7 +30,7 @@ function EditAvatarPopup(props) {
         id="avatar-input"
         ref={avatarInput}
       />
-      <span className="popup-form__error-msg avatar-input-error"></span>
+      <span className="form__error-msg avatar-input-error"></span>
     </PopupWithForm>
   );
 }

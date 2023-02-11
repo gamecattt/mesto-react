@@ -40,7 +40,7 @@ function EditProfilePopup(props) {
       onSubmit={handleSubmit}
     >
       <input
-        className="popup-form__input"
+        className="form__input popup-form__input"
         name="name"
         type="text"
         placeholder="Имя"
@@ -51,9 +51,9 @@ function EditProfilePopup(props) {
         value={name || ''}
         onChange={handleNameChange}
       />
-      <span className="popup-form__error-msg nickname-input-error"></span>
+      <span className="form__error-msg nickname-input-error"></span>
       <input
-        className="popup-form__input"
+        className="form__input popup-form__input"
         name="about"
         type="text"
         placeholder="О себе"
@@ -64,7 +64,7 @@ function EditProfilePopup(props) {
         value={description || ''}
         onChange={handleDescriptionChange}
       />
-      <span className="popup-form__error-msg about-input-error"></span>
+      <span className="form__error-msg about-input-error"></span>
     </PopupWithForm>
   );
 }

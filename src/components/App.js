@@ -9,6 +9,12 @@ import api from '../utils/api';
 import CurrentUserContext from '../contexts/CurrentUserContext';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from "./AddPlacePopup";
+import Register from "./Register";
+import Login from "./Login";
+import {Route, Routes, useNavigate} from "react-router-dom";
+import * as auth from "../utils/auth";
+import ProtectedRoute from "./ProtectedRoute";
+import InfoTooltip from "./InfoTooltip"
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -17,6 +23,10 @@ function App() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [message, setMessage] = useState({});
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     api
@@ -40,6 +50,10 @@ function App() {
       });
   }, []);
 
+  useEffect(() => {
+    handleTokenCheck();
+  }, [])
+
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
   }
@@ -61,6 +75,7 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setSelectedCard(null);
+    setMessage({});
   }
 
   function handleCardLike(card) {
@@ -122,20 +137,57 @@ function App() {
         });
   }
 
+  const handleTokenCheck = () => {
+    if (localStorage.getItem('token')){
+      const token = localStorage.getItem('token');
+      auth.checkToken(token).then((res) => {
+        setLoggedIn(true);
+        navigate("/", {replace: true})
+      });
+    }
+  }
+
+  const handleLogin = () => {
+      setLoggedIn(true);
+  }
+
+    const handleRegister = (res) => {
+        setMessage({
+            isSuccess: !!res.data,
+            text: res.data ? 'Вы успешно зарегистрировались!' : 'Что-то пошло не так! Попробуйте ещё раз.',
+        })
+    }
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setLoggedIn(false);
+        navigate('/sign-in', {replace: true});
+    }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page__wrapper">
-        <Header />
-        <Main
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onEditAvatar={handleEditAvatarClick}
-          onCardClick={handleCardClick}
-          onCardLike={handleCardLike}
-          onCardDelete={handleCardDelete}
-          cards={cards}
-        />
-        <Footer />
+        <Header loggedIn={loggedIn} handleLogout={handleLogout} />
+
+        <Routes>
+            <Route
+                path="/"
+                element={
+                    <ProtectedRoute element={Main} loggedIn={loggedIn}
+                        onEditProfile={handleEditProfileClick}
+                        onAddPlace={handleAddPlaceClick}
+                        onEditAvatar={handleEditAvatarClick}
+                        onCardClick={handleCardClick}
+                        onCardLike={handleCardLike}
+                        onCardDelete={handleCardDelete}
+                        cards={cards} />
+                }
+            />
+          <Route path="/sign-up" element={<Register handleRegister={handleRegister} />} />
+          <Route path="/sign-in" element={<Login handleLogin={handleLogin} />} />
+        </Routes>
+
+        {loggedIn && <Footer />}
       </div>
       <EditProfilePopup
         isOpen={isEditProfilePopupOpen}
@@ -148,12 +200,13 @@ function App() {
           onPlaceAdd={handleAddPlaceSubmit}
       />
       <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+      <InfoTooltip message={message} onClose={closeAllPopups} />
       <EditAvatarPopup
         isOpen={isEditAvatarPopupOpen}
         onClose={closeAllPopups}
         onUpdateAvatar={handleUpdateAvatar}
       />
-      <PopupWithForm name="confirm" title="Вы уверены?" buttonText="Да"></PopupWithForm>
+      <PopupWithForm name="confirm" title="Вы уверены?" buttonText="Да" />
     </CurrentUserContext.Provider>
   );
 }

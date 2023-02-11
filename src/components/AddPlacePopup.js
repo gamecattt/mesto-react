@@ -31,7 +31,7 @@ function AddPlacePopup(props) {
             onSubmit={handleSubmit}
         >
             <input
-                className="popup-form__input"
+                className="form__input popup-form__input"
                 name="name"
                 type="text"
                 placeholder="Название"
@@ -42,9 +42,9 @@ function AddPlacePopup(props) {
                 value={values.name || ''}
                 onChange={handleChange}
             />
-            <span className="popup-form__error-msg name-input-error"></span>
+            <span className="form__error-msg name-input-error"></span>
             <input
-                className="popup-form__input"
+                className="form__input popup-form__input"
                 name="link"
                 type="url"
                 placeholder="Ссылка на картинку"
@@ -53,7 +53,7 @@ function AddPlacePopup(props) {
                 value={values.link || ''}
                 onChange={handleChange}
             />
-            <span className="popup-form__error-msg link-input-error"></span>
+            <span className="form__error-msg link-input-error"></span>
         </PopupWithForm>
     );
 }
